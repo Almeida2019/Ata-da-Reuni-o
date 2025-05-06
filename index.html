@@ -1,0 +1,296 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ata da Reunião - Esclarecimento sobre Integração de Métodos de Pagamento EMIS</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #F5F5F5; /* Light gray for neutrality */
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header img {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 10px;
+        }
+        h1, h2 {
+            color: #1C2526; /* Navy Blue */
+        }
+        h3 {
+            color: #FF4500; /* Deep Orange */
+        }
+        h1 {
+            border-bottom: 2px solid #FF4500; /* Deep Orange */
+            padding-bottom: 10px;
+        }
+        h2 {
+            margin-top: 20px;
+        }
+        .meeting-info, .participants-list {
+            margin-bottom: 20px;
+        }
+        .meeting-info p, .participants-list p {
+            margin: 5px 0;
+        }
+        .participants-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .participants-list li {
+            background: #E6ECEF; /* Light navy tint */
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+        }
+        .main-subject {
+            margin-bottom: 20px;
+        }
+        .points-discussed {
+            margin-bottom: 20px;
+        }
+        .points-discussed h3 {
+            margin-bottom: 10px;
+        }
+        .points-discussed ul {
+            list-style: disc;
+            margin-left: 20px;
+        }
+        .points-discussed li {
+            margin-bottom: 10px;
+        }
+        .decisions-conclusions, .actions-taken {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .closing {
+            margin-top: 30px;
+            text-align: center;
+            font-style: italic;
+            color: #555;
+        }
+        strong {
+            color: #1C2526; /* Navy Blue */
+        }
+        .download-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #FF4500; /* Deep Orange */
+            color: #fff;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 20px auto;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+        .download-button:hover {
+            background-color: #CC3700; /* Darker orange */
+        }
+        .author-note {
+            margin-top: 20px;
+            font-style: italic;
+            color: #555;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://grupoangbu.com/wp-content/uploads/2024/12/cropped-cropped-ANGBU-LDA-With-border-Transparent.webp" alt="Grupo Angbu Logo">
+            <h1>Ata da Reunião</h1>
+            <h2>Esclarecimento sobre Integração de Métodos de Pagamento EMIS</h2>
+        </div>
+
+        <div class="meeting-info">
+            <p><strong>Data:</strong> 06 de Maio de 2025</p>
+            <p><strong>Hora:</strong> 10:30-11:00</p>
+            <p><strong>Local:</strong> Online/Teams</p>
+        </div>
+
+        <div class="participants-list">
+            <p><strong>Participantes:</strong></p>
+            <ul>
+                <li>Angelo Buanga (Representante da empresa cliente - Grupo Angbu/Tchiowa Net)</li>
+                <li>Almeida José (Representante da empresa cliente - Grupo Angbu/Tchiowa Net)</li>
+                <li>Beldade Santos (Representante da EMIS)</li>
+            </ul>
+        </div>
+
+        <div class="main-subject">
+            <h2>Assunto Principal:</h2>
+            <p>Angelo Buanga e Almeida José, em representação do Grupo Angbu/Tchiowa Net, contactaram a EMIS para obter esclarecimentos sobre a possibilidade de dinamizar os métodos de pagamento para os seus clientes, especificamente integrando os serviços da EMIS com o seu sistema de faturação online, de modo a facilitar pagamentos por transferência com sincronização de protocolos.</p>
+        </div>
+
+        <div class="points-discussed">
+            <h2>Pontos Discutidos:</h2>
+            <ul>
+                <li>
+                    <h3>Necessidade do Cliente:</h3>
+                    <p>O Grupo Angbu/Tchiowa Net pretende facilitar os pagamentos dos seus clientes, integrando um sistema que permita pagamentos por transferência (via EMIS) e que se sincronize com o seu sistema de faturação online.</p>
+                </li>
+                <li>
+                    <h3>Explicação da EMIS (Beldade Santos):</h3>
+                    <p>A EMIS não integra diretamente com sistemas internos de empresas. O manual de integração da EMIS serve para gerar referências, sendo a integração posterior da responsabilidade da empresa cliente com o seu sistema.</p>
+                    <p><strong>Exemplo ZAP:</strong> O pagamento da ZAP funciona como "carregamento de conta" com uma referência fixa, e não como uma referência de pagamento por fatura tradicional.</p>
+                </li>
+                <li>
+                    <h3>Tipos de Serviços EMIS e Integração:</h3>
+                    <p><strong>Serviços Disponíveis:</strong></p>
+                    <ul>
+                        <li>Pagamento por Fatura: Referência gerada na fatura no final do mês.</li>
+                        <li>Carregamento de Conta: Número fixo (ex.: ZAP).</li>
+                        <li>Pagamento Genérico: Referência e montante variáveis.</li>
+                    </ul>
+                    <p><strong>Processo de Adesão Geral:</strong></p>
+                    <ul>
+                        <li>Contactar um banco de apoio.</li>
+                        <li>Preencher um modelo de adesão.</li>
+                        <li>Definir o tipo de serviço pretendido.</li>
+                        <li>O banco solicitará a documentação necessária.</li>
+                    </ul>
+                </li>
+                <li>
+                    <h3>Opções de Comunicação e Integração:</h3>
+                    <p><strong>Comunicação em Tempo Real (Imediata):</strong></p>
+                    <ul>
+                        <li>Requer um PST (Provedor de Serviços de Tecnologias de Informação certificado pela EMIS) que já possua um link dedicado. Este PST subcontratado tratará da geração de referências e da comunicação. A EMIS pode fornecer uma lista destes provedores.</li>
+                        <li>Alternativa: Se a empresa cliente tiver capacidade de TI qualificada, servidor seguro e volume transacional que justifique, pode solicitar um link dedicado (PRT) diretamente à EMIS. Este processo é mais complexo e requer aprovação da administração da EMIS.</li>
+                    </ul>
+                    <p><strong>Gateway de Pagamentos Online (GPO) para Web/Lojas Virtuais:</strong></p>
+                    <ul>
+                        <li>Para pagamentos online (ex.: loja virtual da Tchiowa Net), a GPO é uma opção.</li>
+                        <li>Adesão via banco, escolhendo o tipo de comunicação "Aframe".</li>
+                        <li>Não necessita de terceirização se a empresa tiver capacidade de TI interna para integrar o Aframe. Permite pagamentos via Multicaixa Express.</li>
+                        <li>Almeida José mencionou que a Tchiowa Net pretende lançar uma loja virtual e poderá usar os serviços da AngoWeb, que já poderá ter integração com EMIS Express.</li>
+                    </ul>
+                </li>
+                <li>
+                    <h3>Pagamentos Internacionais:</h3>
+                    <p>Atualmente, a EMIS não suporta pagamentos internacionais (ex.: PayPal). O foco é em pagamentos nacionais. Poderão existir atualizações futuras para incluir cartões internacionais, mas atualmente não é possível devido a restrições cambiais.</p>
+                </li>
+                <li>
+                    <h3>Informação Adicional:</h3>
+                    <p>Informações sobre os serviços da EMIS podem ser consultadas no sítio oficial da EMIS.</p>
+                </li>
+            </ul>
+        </div>
+
+        <div class="decisions-conclusions">
+            <h2>Decisões/Conclusões:</h2>
+            <ul>
+                <li>O Grupo Angbu/Tchiowa Net pode optar por subcontratar um PST para a integração em tempo real com o seu sistema de faturação ou, para a sua futura loja online, utilizar a GPO.</li>
+                <li>É possível iniciar com uma entidade terceirizada (PST) e posteriormente alterar a abordagem.</li>
+                <li>A GPO com comunicação "Aframe" parece ser a solução mais direta para a loja virtual, se a Tchiowa Net tiver capacidade técnica interna para a integração.</li>
+            </ul>
+        </div>
+
+        <div class="actions-taken">
+            <h2>Ações a Serem Tomadas (Próximos Passos):</h2>
+            <ul>
+                <li>
+                    <strong>Beldade Santos (EMIS):</strong>
+                    <ul>
+                        <li>Partilhar com Angelo Buanga e Almeida José uma lista de contactos de PSTs (empresas terceirizadas certificadas) para a opção de comunicação em tempo real. (Comprometeu-se a enviar no final da reunião).</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Angelo Buanga e Almeida José (Grupo Angbu/Tchiowa Net):</strong>
+                    <ul>
+                        <li>Analisar a lista de PSTs e contactá-los para obter propostas, caso opte por esta via para o sistema de faturação.</li>
+                        <li>Para a loja virtual, considerar a GPO: dirigir-se ao banco, preencher o formulário de adesão à GPO e definir o serviço, indicando a comunicação "Aframe".</li>
+                        <li>Avaliar a capacidade técnica interna para a integração "Aframe" (GPO) ou a necessidade de recorrer a serviços como os da AngoWeb.</li>
+                        <li>Tomar a documentação e esclarecimentos como ponto de partida para as decisões internas.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="closing">
+            <p>Encerramento:</p>
+            <p>A reunião foi encerrada com agradecimentos mútuos. Angelo Buanga e Almeida José consideraram os esclarecimentos suficientes para os próximos passos.</p>
+        </div>
+
+        <div class="author-note">
+            <p>Ata redigida por Almeida José</p>
+        </div>
+
+        <div style="text-align: center;">
+            <!-- Placeholder PDF for testing; replace with actual PDF path -->
+            <a href="data:application/pdf;base64,JVBERi0xLjAKMSAwIG9iag<<endobj>>2 0 obj<<>>endobj>>3 0 obj<<>>stream
+BT /F1 12 Tf 100 700 Td (Placeholder PDF) Tj ET
+endstream
+endobj
+4 0 obj<<>>endobj>>xref
+0 5
+0000000000 65535 f 
+0000000010 00000 n 
+0000000050 00000 n 
+0000000100 00000 n 
+0000000200 00000 n 
+trailer
+<<
+/Size 5
+/Root 1 0 R
+>>
+startxref
+300
+%%EOF" class="download-button" download="ata_reuniao_emis.pdf">Descarregar PDF</a>
+        </div>
+    </div>
+</body>
+</html>
